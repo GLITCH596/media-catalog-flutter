@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'screens/movies_screen.dart';
+import 'screens/games_screen.dart';
 
-void main() async {
+void main() {
   runApp(const MyApp());
 }
 
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
             brightness: Brightness.dark,
         ),
       ),
-      home: MoviesScreen(),
+      home: GamesScreen(),
     );
   }
 }

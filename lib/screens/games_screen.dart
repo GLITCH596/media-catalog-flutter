@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:movie_catalog_learning/bloc/movies_bloc.dart';
-import 'package:movie_catalog_learning/data/tmdb_api.dart';
+import 'package:movie_catalog_learning/bloc/games_bloc.dart';
+import 'package:movie_catalog_learning/data/rawg_api.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class MoviesScreen extends StatelessWidget {
-  const MoviesScreen({super.key});
+class GamesScreen extends StatelessWidget {
+  const GamesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => MoviesBloc(TmdbApi())..add(MoviesLoadRequested()),
+      create: (_) => GamesBloc(RawgApi())..add(GamesLoadRequested()),
       child: const MoviesView(),
 
     );
@@ -22,7 +22,7 @@ class MoviesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Популярные фильмы')),
+      appBar: AppBar(title: const Text('Popular games')),
       body: Column(
         children: [
           Padding(
@@ -30,9 +30,9 @@ class MoviesView extends StatelessWidget {
             child: TextField(
               textInputAction: TextInputAction.search,
               onSubmitted: (query) =>
-                  context.read<MoviesBloc>().add(MoviesSearchSubmitted(query)),
+                  context.read<GamesBloc>().add(GamesSearchSubmitted(query)),
               decoration: InputDecoration(
-                hintText: 'Find a movie',
+                hintText: 'Find a game',
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
                 border: OutlineInputBorder(
@@ -43,12 +43,12 @@ class MoviesView extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: BlocBuilder<MoviesBloc, MoviesState>(
+            child: BlocBuilder<GamesBloc, GamesState>(
               builder: (context, state) {
-                if (state is MoviesLoading) {
+                if (state is GamesLoading) {
                   return const Center(child: CircularProgressIndicator());
                 }
-                if (state is MoviesError) {
+                if (state is GamesError) {
                   return Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -57,7 +57,7 @@ class MoviesView extends StatelessWidget {
                         const SizedBox(height: 12),
                         ElevatedButton(
                           onPressed: () =>
-                              context.read<MoviesBloc>().add(MoviesLoadRequested()),
+                              context.read<GamesBloc>().add(GamesLoadRequested()),
                           child: const Text('Повторить'),
                         ),
                       ],
@@ -65,23 +65,25 @@ class MoviesView extends StatelessWidget {
                   );
                 }
 
-                final movies = (state as MoviesLoaded).movies;
+                final games = (state as GamesLoaded).movies;
                 return ListView.builder(
-                  itemCount: movies.length,
+                  itemCount: games.length,
                   itemBuilder: (context, index) {
-                    final movie = movies[index];
+                    final game = games[index];
                     return ListTile(
-                      leading: movie.posterPath == null
-                          ? const Icon(Icons.movie)
+                      leading: game.backgroundImage == null
+                          ? const Icon(Icons.sports_esports)
                           : Image.network(
-                          'https://image.tmdb.org/t/p/w200${movie.posterPath}'),
-                      title: Text(movie.title),
-                      subtitle: Text(
-                        movie.overview,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                        game.backgroundImage!,
+                        width: 80,
+                        height: 56,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                        const Icon(Icons.sports_esports),
                       ),
-                      trailing: Text(movie.voteAverage.toStringAsFixed(1)),
+                      title: Text(game.name),
+                      subtitle: Text(game.released),
+                      trailing: Text(game.rating.toStringAsFixed(1)),
                     );
                   },
                 );
