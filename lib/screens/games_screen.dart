@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:movie_catalog_learning/bloc/games_bloc.dart';
 import 'package:movie_catalog_learning/data/rawg_api.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'search_app_bar.dart';
 
 class GamesScreen extends StatelessWidget {
   const GamesScreen({super.key});
@@ -22,26 +23,9 @@ class MoviesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Popular games')),
+      appBar: const SearchAppBar(),
       body: Column(
         children: [
-          Padding(
-              padding: EdgeInsetsGeometry.only(left: 8, right: 8, top: 8),
-            child: TextField(
-              textInputAction: TextInputAction.search,
-              onSubmitted: (query) =>
-                  context.read<GamesBloc>().add(GamesSearchSubmitted(query)),
-              decoration: InputDecoration(
-                hintText: 'Find a game',
-                prefixIcon: const Icon(Icons.search),
-                filled: true,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(4),
-                  borderSide: BorderSide.none
-                ),
-              ),
-            ),
-          ),
           Expanded(
             child: BlocBuilder<GamesBloc, GamesState>(
               builder: (context, state) {
